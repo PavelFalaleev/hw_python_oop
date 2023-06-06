@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
     def __init__(self, training_type, duration, distance, speed, calories):
@@ -13,9 +17,6 @@ class InfoMessage:
                 f'Дистанция: {self.distance:.3f} км; '
                 f'Ср. скорость: {self.speed:.3f} км/ч; '
                 f'Потрачено ккал: {self.calories:.3f}.')
-        # Числовые значения при выводе должны быть
-        # отформатированы до тысячных долей
-        # (до третьего знака после запятой).
 
 
 class Training:
@@ -134,32 +135,16 @@ class Swimming(Training):
                           * self.weight * self.duration)
         return spent_calories
 
-    # Есть и ещё один параметр, который надо переопределить,
-    # ведь расстояние, преодолеваемое за один гребок,
-    # отличается от длины шага. Значит, необходимо
-    # переопределить атрибут LEN_STEP базового класса.
-
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    type = {'SWM': Swimming,
-            'RUN': Running,
-            'WLK': SportsWalking}
+    code_to_training_type = {'SWM': Swimming,
+                             'RUN': Running,
+                             'WLK': SportsWalking}
 
-    if workout_type in type:
-
-        if workout_type == 'SWM':
-            action, duration, weight, length_pool, count_pool = data
-            return type[workout_type](action, duration, weight,
-                                      length_pool, count_pool)
-
-        elif workout_type == 'RUN':
-            action, duration, weight, = data
-            return type[workout_type](action, duration, weight)
-
-        if workout_type == 'WLK':
-            action, duration, weight, height = data
-            return type[workout_type](action, duration, weight, height)
+    if workout_type in code_to_training_type:
+        return code_to_training_type[workout_type](*data)
+    raise ValueError('Ошибка в типе тренировки')
 
 
 def main(training: Training) -> None:
